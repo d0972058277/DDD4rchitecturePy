@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Self, TypeVar, Generic
 
-TId = TypeVar("TId", bound=any)
+TId = TypeVar("TId")
 
 
 class Entity(ABC, Generic[TId]):

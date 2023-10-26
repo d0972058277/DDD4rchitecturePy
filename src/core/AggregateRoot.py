@@ -4,7 +4,7 @@ from src.core import IDomainEvent
 from src.core import Entity
 
 
-TId = TypeVar("TId", bound=any)
+TId = TypeVar("TId")
 
 
 class AggregateRoot(Entity[TId], ABC):
