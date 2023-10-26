@@ -1,3 +1,4 @@
+import pytest
 from src.fp import Result
 
 
@@ -11,7 +12,8 @@ def test_success():
     assert result.is_success == True
     assert result.is_failure == False
     assert result.value == None
-    assert result.error == None
+    with pytest.raises(RuntimeError):
+        result.error
 
 
 def test_success_with_value():
@@ -25,7 +27,8 @@ def test_success_with_value():
     assert result.is_success == True
     assert result.is_failure == False
     assert result.value == value
-    assert result.error == None
+    with pytest.raises(RuntimeError):
+        result.error
 
 
 def test_failure():
@@ -38,5 +41,6 @@ def test_failure():
     # Then
     assert result.is_success == False
     assert result.is_failure == True
-    assert result.value == None
     assert result.error == error_message
+    with pytest.raises(RuntimeError):
+        result.value

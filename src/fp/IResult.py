@@ -25,7 +25,3 @@ class IError(ABC):
     @abstractmethod
     def error(self):
         pass
-
-
-class IResultBase(IResult, IValue, IError, ABC):
-    pass

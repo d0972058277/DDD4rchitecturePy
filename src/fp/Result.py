@@ -1,7 +1,8 @@
-from src.fp.IResult import IResultBase
+from abc import ABC
+from src.fp.IResult import IResult, IValue, IError
 
 
-class Result(IResultBase):
+class Result(IResult, IValue, IError, ABC):
     __is_success: bool
     __value: any
     __error: any
@@ -21,16 +22,20 @@ class Result(IResultBase):
 
     @property
     def value(self) -> any:
+        if not self.is_success:
+            raise RuntimeError("Result is failure")
         return self.__value
 
     @property
     def error(self) -> any:
+        if self.is_success:
+            raise RuntimeError("Result is success")
         return self.__error
 
     @staticmethod
-    def success(value: any = None) -> IResultBase:
+    def success(value: any = None) -> "Result":
         return Result(True, value, None)
 
     @staticmethod
-    def failure(error: any) -> IResultBase:
+    def failure(error: any) -> "Result":
         return Result(False, None, error)
