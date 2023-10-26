@@ -1,13 +1,16 @@
-from abc import ABC
-from src.fp.IResult import IResult, IValue, IError
+from typing import Generic, TypeVar
 
 
-class Result(IResult, IValue, IError, ABC):
+TValue = TypeVar("TValue")
+TError = TypeVar("TError")
+
+
+class Result(Generic[TValue, TError]):
     __is_success: bool
-    __value: any
-    __error: any
+    __value: TValue
+    __error: TError
 
-    def __init__(self, is_success: bool, value: any, error: any) -> None:
+    def __init__(self, is_success: bool, value: TValue, error: TError) -> None:
         self.__is_success = is_success
         self.__value = value
         self.__error = error
@@ -21,21 +24,21 @@ class Result(IResult, IValue, IError, ABC):
         return not self.__is_success
 
     @property
-    def value(self) -> any:
+    def value(self) -> TValue:
         if not self.is_success:
             raise RuntimeError("Result is failure")
         return self.__value
 
     @property
-    def error(self) -> any:
+    def error(self) -> TError:
         if self.is_success:
             raise RuntimeError("Result is success")
         return self.__error
 
     @staticmethod
-    def success(value: any = None) -> "Result":
+    def success(value: TValue = None) -> "Result":
         return Result(True, value, None)
 
     @staticmethod
-    def failure(error: any) -> "Result":
+    def failure(error: TError) -> "Result":
         return Result(False, None, error)
