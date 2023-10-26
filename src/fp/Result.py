@@ -36,9 +36,9 @@ class Result(Generic[TValue, TError]):
         return self.__error
 
     @staticmethod
-    def success(value: TValue = None) -> "Result":
+    def success(value: TValue = None) -> "Result[TValue, None]":
         return Result(True, value, None)
 
     @staticmethod
-    def failure(error: TError) -> "Result":
+    def failure(error: TError) -> "Result[None, TError]":
         return Result(False, None, error)
