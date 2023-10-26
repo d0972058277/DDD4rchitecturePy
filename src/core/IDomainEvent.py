@@ -1,5 +1,5 @@
 from abc import ABC
 
 
-class DomainEvent(ABC):
+class IDomainEvent(ABC):
     pass

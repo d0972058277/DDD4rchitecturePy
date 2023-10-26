@@ -1,8 +1,8 @@
 import pytest
-from src.core import AggregateRoot, DomainEvent
+from src.core import AggregateRoot, IDomainEvent
 
 
-class ExampleDomainEvent(DomainEvent):
+class ExampleDomainEvent(IDomainEvent):
     pass
 
 

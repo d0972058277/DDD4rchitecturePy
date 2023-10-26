@@ -1,6 +1,6 @@
 from abc import ABC
 from typing import List, TypeVar
-from src.core import DomainEvent
+from src.core import IDomainEvent
 from src.core import Entity
 
 
@@ -8,7 +8,7 @@ TId = TypeVar("TId", bound=any)
 
 
 class AggregateRoot(Entity[TId], ABC):
-    __domain_events: List[DomainEvent]
+    __domain_events: List[IDomainEvent]
 
     def __init__(self, id: TId = None) -> None:
         if type(self) is AggregateRoot:
@@ -18,10 +18,10 @@ class AggregateRoot(Entity[TId], ABC):
         self.__domain_events = []
 
     @property
-    def domain_events(self) -> List[DomainEvent]:
+    def domain_events(self) -> List[IDomainEvent]:
         return self.__domain_events.copy()
 
-    def _add_domain_event(self, domain_event: DomainEvent) -> None:
+    def _add_domain_event(self, domain_event: IDomainEvent) -> None:
         self.__domain_events.append(domain_event)
 
     def clear_domain_events(self) -> None:
