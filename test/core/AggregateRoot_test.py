@@ -1,5 +1,5 @@
 import pytest
-from src.core import AggregateRoot, IDomainEvent
+from core import AggregateRoot, IDomainEvent
 
 
 class ExampleDomainEvent(IDomainEvent):

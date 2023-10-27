@@ -1,5 +1,5 @@
 import pytest
-from src.core import SimpleValueObject
+from core import SimpleValueObject
 
 
 class ExampleValueObject(SimpleValueObject):

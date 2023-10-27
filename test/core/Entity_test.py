@@ -1,5 +1,5 @@
 import pytest
-from src.core import Entity
+from core import Entity
 
 
 class ExampleEntity1(Entity[int]):

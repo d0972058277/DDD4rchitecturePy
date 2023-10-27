@@ -1,6 +1,6 @@
 from abc import ABC
 from typing import Iterable
-from src.core import ValueObject
+from .ValueObject import ValueObject
 
 
 class SimpleValueObject(ValueObject, ABC):

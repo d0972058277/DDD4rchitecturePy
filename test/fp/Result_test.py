@@ -1,5 +1,5 @@
 import pytest
-from src.fp import Result
+from fp import Result
 
 
 def test_success():

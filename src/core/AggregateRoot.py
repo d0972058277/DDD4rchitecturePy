@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import List, TypeVar
-from src.core import IDomainEvent
-from src.core import Entity
+from .IDomainEvent import IDomainEvent
+from .Entity import Entity
 
 
 TId = TypeVar("TId")

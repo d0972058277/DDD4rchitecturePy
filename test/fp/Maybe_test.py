@@ -1,5 +1,5 @@
 import pytest
-from src.fp import Maybe
+from fp import Maybe
 
 
 def test_has_value():

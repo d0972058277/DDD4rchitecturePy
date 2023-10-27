@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Self, TypeVar, Generic
+from typing import TypeVar, Generic
 
 TId = TypeVar("TId")
 
