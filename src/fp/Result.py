@@ -36,7 +36,7 @@ class Result(Generic[TValue, TError]):
         return self.__error
 
     @staticmethod
-    def success(value: TValue = None) -> "Result[TValue, None]":
+    def success(value: TValue = None) -> "Result[TValue, None]":  # type: ignore
         return Result(True, value, None)
 
     @staticmethod

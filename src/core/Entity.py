@@ -7,7 +7,7 @@ TId = TypeVar("TId")
 class Entity(ABC, Generic[TId]):
     """Abstract base class for entities."""
 
-    _id: TId = None
+    _id: TId
 
     def __init__(self, id: TId = None) -> None:
         """Initialize a new entity.
@@ -45,10 +45,7 @@ class Entity(ABC, Generic[TId]):
         if not isinstance(other, Entity):
             return False
 
-        if self._is_transient() or other._is_transient():
-            return False
-
-        return self.id == other.id
+        return self.id == other.id  # type: ignore
 
     def __ne__(self, other: object) -> bool:
         """Check if two entities are not equal."""
@@ -58,11 +55,7 @@ class Entity(ABC, Generic[TId]):
         """Get the hash value of the entity."""
         return hash(f"{type(self).__qualname__}({self.id})")
 
-    def _is_transient(self) -> bool:
-        """Check if the entity is transient."""
-        return self.id is None or self.id == 0
-
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: object) -> bool:
         """Compare two entities based on their IDs."""
         if other is None:
             return False
@@ -70,13 +63,13 @@ class Entity(ABC, Generic[TId]):
         if self is other:
             return False
 
-        return self.id < other.id
+        return self.id < other.id  # type: ignore
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other: object) -> bool:
         """Compare two entities based on their IDs."""
         return self == other or self < other
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: object) -> bool:
         """Compare two entities based on their IDs."""
         if other is None:
             return False
@@ -84,8 +77,8 @@ class Entity(ABC, Generic[TId]):
         if self is other:
             return False
 
-        return self.id > other.id
+        return self.id > other.id  # type: ignore
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other: object) -> bool:
         """Compare two entities based on their IDs."""
         return self == other or self > other

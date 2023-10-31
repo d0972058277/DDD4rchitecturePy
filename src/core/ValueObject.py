@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Any, Iterable
 
 
 class ValueObject(ABC):
@@ -10,19 +10,17 @@ class ValueObject(ABC):
         self._cached_hash_code = None
 
     @abstractmethod
-    def _get_equality_components(self) -> Iterable:
+    def _get_equality_components(self) -> Iterable[Any]:
         pass
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ValueObject):
             return False
 
         if type(self) != type(other):
             return False
 
-        return list(self._get_equality_components()) == list(
-            other._get_equality_components()
-        )
+        return list(self._get_equality_components()) == list(other._get_equality_components())
 
     def __hash__(self) -> int:
         if self._cached_hash_code is None:
@@ -30,22 +28,20 @@ class ValueObject(ABC):
 
         return self._cached_hash_code
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: object) -> bool:
         if not isinstance(other, ValueObject):
             raise TypeError(f"Cannot compare {type(self)} and {type(other)}")
 
         if type(self) != type(other):
             raise TypeError("Cannot compare different types of ValueObject")
 
-        return list(self._get_equality_components()) < list(
-            other._get_equality_components()
-        )
+        return list(self._get_equality_components()) < list(other._get_equality_components())
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other: object) -> bool:
         return self < other or self == other
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: object) -> bool:
         return not self <= other
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other: object) -> bool:
         return not self < other

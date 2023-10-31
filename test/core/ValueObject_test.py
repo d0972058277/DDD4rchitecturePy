@@ -71,11 +71,11 @@ def test_type_check():
 
     # Then
     with pytest.raises(TypeError):
-        obj1 == obj2  # 與非 ValueObject 比較應引發 TypeError
-        obj1 < obj2  # 與非 ValueObject 比較應引發 TypeError
+        obj1 == obj2  # 與非 ValueObject 比較應引發 TypeError # type: ignore
+        obj1 < obj2  # 與非 ValueObject 比較應引發 TypeError # type: ignore
 
 
 def test_cannot_instantiate_abstract_class():
     # Assert
     with pytest.raises(TypeError):
-        ValueObject(1)
+        ValueObject(1)  # type: ignore
