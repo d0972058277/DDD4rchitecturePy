@@ -1,68 +1,14 @@
-import pytest
-from pytest_mock import MockerFixture
+from typing import cast
+from unittest import mock
 
-from mediatr import IMediator, IServiceProvider, Mediator
+from mediatr import IServiceProvider, Mediator
 from .Example import *
 
 
-@pytest.fixture
-def service_provider(mocker: MockerFixture) -> IServiceProvider:
-    mock = mocker.Mock(IServiceProvider)
-
-    def get_service(handler_type: type):
-        if handler_type is NoneExampleRequestHandler:
-            return NoneExampleRequestHandler()
-        if handler_type is IntExampleRequestHandler:
-            return IntExampleRequestHandler()
-        if handler_type is IMediator:
-            return Mediator(mock)
-
-    def get_required_service(handler_type: type):
-        if handler_type is NoneExampleRequestHandler:
-            return NoneExampleRequestHandler()
-        if handler_type is IntExampleRequestHandler:
-            return IntExampleRequestHandler()
-        if handler_type is IMediator:
-            return Mediator(mock)
-        raise RuntimeError()
-
-    mock.GetService.side_effect = get_service
-    mock.GetRequiredService.side_effect = get_required_service
-
-    return mock
-
-
-@pytest.fixture
-def mediator(service_provider: IServiceProvider) -> IMediator:
-    return service_provider.GetRequiredService(IMediator)
-
-
-async def test_none_request_handler(mediator: IMediator):
+async def test_request_handler():
     # Given
-    request = NoneExampleRequest()
-
-    # When
-    result = await mediator.send_async(request)
-
-    # Then
-    assert result is None
-
-
-async def test_int_request_handler(mediator: IMediator):
-    # Given
-    request = IntExampleRequest(42)
-
-    # When
-    result = await mediator.send_async(request)
-
-    # Then
-    assert result == 42
-
-
-async def test_handler(service_provider: IServiceProvider):
-    # Given
-    none_handler = service_provider.GetRequiredService(NoneExampleRequestHandler)
-    int_handler = service_provider.GetRequiredService(IntExampleRequestHandler)
+    none_handler = NoneExampleRequestHandler()
+    int_handler = IntExampleRequestHandler()
 
     # When
     none_result = await none_handler.handle_async(NoneExampleRequest())
@@ -72,3 +18,66 @@ async def test_handler(service_provider: IServiceProvider):
 
     assert none_result == None
     assert int_result == 1
+
+
+async def test_send_none_request():
+    # Given
+    service_provider = cast(IServiceProvider, mock.Mock(spec=IServiceProvider))
+    service_provider.GetRequiredService = mock.Mock(wraps=IServiceProvider.GetRequiredService, side_effect=lambda service_type: NoneExampleRequestHandler())  # type: ignore
+    mediator = Mediator(service_provider)
+
+    request = NoneExampleRequest()
+
+    # When
+    result = await mediator.send_async(request)
+
+    # Then
+    assert result is None
+    service_provider.GetRequiredService.assert_called_with(NoneExampleRequestHandler)
+
+
+async def test_send_int_request():
+    # Given
+    request = IntExampleRequest(42)
+    service_provider = cast(IServiceProvider, mock.Mock(spec=IServiceProvider))
+    service_provider.GetRequiredService = mock.Mock(wraps=IServiceProvider.GetRequiredService, side_effect=lambda service_type: IntExampleRequestHandler())  # type: ignore
+    mediator = Mediator(service_provider)
+
+    # When
+    result = await mediator.send_async(request)
+
+    # Then
+    assert result == 42
+    service_provider.GetRequiredService.assert_called_with(IntExampleRequestHandler)
+
+
+async def test_publish_example_notification():
+    # Given
+    aExampleNotificationHandler = AExampleNotificationHandler()
+    aExampleNotificationHandler.handle_async = mock.Mock(wraps=AExampleNotificationHandler.handle_async, side_effect=aExampleNotificationHandler.handle_async)
+
+    bExampleNotificationHandler = BExampleNotificationHandler()
+    bExampleNotificationHandler.handle_async = mock.Mock(wraps=BExampleNotificationHandler.handle_async, side_effect=bExampleNotificationHandler.handle_async)
+
+    def get_required_service(service_type: type):
+        if service_type is AExampleNotificationHandler:
+            return aExampleNotificationHandler
+        elif service_type is BExampleNotificationHandler:
+            return bExampleNotificationHandler
+        else:
+            raise NotImplementedError()
+
+    service_provider = cast(IServiceProvider, mock.Mock(spec=IServiceProvider))
+    service_provider.GetRequiredService = mock.Mock(wraps=IServiceProvider.GetRequiredService, side_effect=get_required_service)
+
+    notification = ExampleNotification()
+    mediator = Mediator(service_provider)
+
+    # When
+    await mediator.publish_async(notification)
+
+    # Then
+    expected_calls = [mock.call(AExampleNotificationHandler), mock.call(BExampleNotificationHandler)]
+    service_provider.GetRequiredService.assert_has_calls(expected_calls, any_order=True)
+    aExampleNotificationHandler.handle_async.assert_called_once()
+    bExampleNotificationHandler.handle_async.assert_called_once()

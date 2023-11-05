@@ -1,8 +1,10 @@
 from typing import TypeVar
 from mediatr import (
+    INotification,
+    INotificationHandler,
     IRequest,
     IRequestHandler,
-    register_handler,
+    Mediator,
 )
 
 TService = TypeVar("TService")
@@ -24,13 +26,29 @@ class IntExampleRequest(IRequest[int]):
         return self.__value
 
 
-@register_handler
+class ExampleNotification(INotification):
+    pass
+
+
+@Mediator.register_handler
 class NoneExampleRequestHandler(IRequestHandler[NoneExampleRequest]):
     async def handle_async(self, request: NoneExampleRequest) -> None:
         return None
 
 
-@register_handler
+@Mediator.register_handler
 class IntExampleRequestHandler(IRequestHandler[IntExampleRequest]):
     async def handle_async(self, request: IntExampleRequest) -> int:
         return request.value
+
+
+@Mediator.register_handler
+class AExampleNotificationHandler(INotificationHandler[ExampleNotification]):
+    async def handle_async(self, notification: ExampleNotification) -> None:
+        pass
+
+
+@Mediator.register_handler
+class BExampleNotificationHandler(INotificationHandler[ExampleNotification]):
+    async def handle_async(self, notification: ExampleNotification) -> None:
+        pass
